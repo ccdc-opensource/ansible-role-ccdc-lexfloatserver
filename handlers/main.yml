@@ -1,0 +1,8 @@
+---
+- name: restart LexFloatServer
+  service: name=LexFloatServer state=restarted
+  notify: wait for LexFloatServer
+  become: true
+
+- name: wait for LexFloatServer
+  wait_for: port=5000 delay=3 timeout=300

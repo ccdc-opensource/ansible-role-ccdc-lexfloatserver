@@ -1,0 +1,30 @@
+---
+lexactivator_licence_key: SET_ME
+lexactivator_product_dat: SET_ME
+lexfloatserver_cryptlex_host: SET_ME
+lexfloatserver_version: 4.6.1
+lexfloatserver_root_directory: /srv/LexFloatServer
+lexfloatserver_version_directory: "{{ lexfloatserver_root_directory }}/LexFloatServer-{{ lexfloatserver_version }}"
+lexfloatserver_configuration_directory: /etc/LexFloatServer
+lexfloatserver_configuration_file: "{{ lexfloatserver_configuration_directory }}/server.config"
+lexfloatserver_yaml_configuration_file: "{{ lexfloatserver_configuration_directory }}/config.yml"
+lexfloatserver_product_dat_file: "{{ lexfloatserver_configuration_directory }}/product.dat"
+lexfloatserver_executable: "{{ lexfloatserver_version_directory }}/lexfloatserver"
+lexfloatserver_distribution_source_url: "https://dl.cryptlex.com/downloads/lexfloatserver/v{{ lexfloatserver_version }}/LexFloatServer-Linux.zip"
+lexfloatserver_port: 5000
+# Determines how long a license lease should last. The time is in seconds.
+# 15 minutes (900 seconds) is recommended. 30 seconds is minimum allowed time.
+lexfloatserver_leaseduration: 900
+
+# The amount of information to be logged in the file. These are the possible levels:
+# "0" - No log
+# "1" - Only Errors
+# "2" - Errors and Warnings
+# "3" - Errors, Warnings and other info regarding when leases are created, removed, expired etc.
+lexfloatserver_loglevel: 3
+
+# Allows for a time lag (in secs) between LexFloatServer and client machines.
+lexfloatserver_allowedclockoffset: 60
+
+# Blocked IP addresses
+lexfloatserver_blockedips: []

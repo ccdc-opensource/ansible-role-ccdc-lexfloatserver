@@ -1,0 +1,11 @@
+[Unit]
+Description=LexFloatServer
+Requires=network.target
+After=syslog.target network.target
+
+[Service]
+ExecStart={{ lexfloatserver_executable }} -s --product-file={{ lexfloatserver_product_dat_file }} --config {{ lexfloatserver_yaml_configuration_file }}
+User=root
+
+[Install]
+WantedBy=multi-user.target

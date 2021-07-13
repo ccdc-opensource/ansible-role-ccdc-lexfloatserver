@@ -1,0 +1,23 @@
+---
+galaxy_info:
+  role_name: lexfloatserver
+  namespace: ccdc
+  author: rockdreamer
+  description: Installs and configures LexFloatServer
+  company: The Cambridge Crystallographic Data Centre
+  license: "license (MIT, BSD)"
+  min_ansible_version: 2.9
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+  galaxy_tags:
+    - licensing
+
+dependencies: []

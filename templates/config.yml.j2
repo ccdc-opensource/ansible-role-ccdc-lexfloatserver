@@ -1,0 +1,41 @@
+server:
+  # Port server should listen to
+  port: {{ lexfloatserver_port }}
+  # License key to activate the server
+  licenseKey: {{ lexactivator_licence_key }}
+  # Product file path
+  productFilePath: {{ lexfloatserver_product_dat_file }}
+  # Determines how long a license lease should last. The time is in seconds. 
+  leaseDuration: {{ lexfloatserver_leaseduration }}
+  # Allows for a time lag (in secs) between server and client machines.
+  allowedClockOffset: {{ lexfloatserver_allowedclockoffset }}
+  # Blocked IP addresses
+  blockedIps: {{ lexfloatserver_blockedips | to_yaml }}
+  cryptlexHost: {{ lexfloatserver_cryptlex_host }}
+
+auth:
+  # API key to access the following web API endpoints: 
+  # - GET /api/server/stats?apiKey=xxx
+  # - GET /api/floating-licenses?apiKey=xxx
+  apiKey: {{ lexfloatserver_api_key }}
+  # List of admin users who can access the dashboard
+  admins:
+    {{ lexfloatserver_admins | to_nice_yaml(indent=2) | indent(4) }}
+
+logging:
+  # Allowed log levels: "0" - Debug, "1" - Information, "2" - Warning, "3" - Errors
+  logLevel: {{ lexfloatserver_loglevel }}
+  console:
+    # Enable console logs
+    enabled: true
+    # Disable colored console logs
+    noColor: true
+  file:
+    # Disable file logs, they will be managed by journald
+    enabled: false
+    # Maximum size of each log file in MBs
+    maxSize: 1
+    # Maximum backups to retain
+    maxBackups: 10
+    # Logs directory
+    directory: "./logs"

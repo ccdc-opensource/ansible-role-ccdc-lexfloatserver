@@ -1,0 +1,104 @@
+---
+- name: Create base LexFloatServer directory
+  file:
+    path: "{{ lexfloatserver_root_directory }}"
+    state: directory
+    owner: root
+    mode: 0755
+  become: true
+
+- name: Create LexFloatServer version directory
+  file:
+    path: "{{ lexfloatserver_version_directory }}"
+    state: directory
+    owner: root
+    mode: 0755
+  become: true
+
+- name: Create LexFloatServer configuration directory
+  file:
+    path: "{{ lexfloatserver_configuration_directory }}"
+    state: directory
+    owner: root
+    mode: 0755
+  become: true
+
+- name: Install unzip
+  package:
+    name: unzip
+    state: present
+  become: true
+
+- name: Download LexFloatServer
+  get_url:
+    url: "{{ lexfloatserver_distribution_source_url }}"
+    dest: "{{ lexfloatserver_root_directory }}/LexFloatServer-Linux-{{ lexfloatserver_version }}.zip"
+  become: true
+
+- name: Extract LexFloatServer executable
+  shell: unzip -jo "{{ lexfloatserver_root_directory }}/LexFloatServer-Linux-{{ lexfloatserver_version }}.zip" "amd64/lexfloatserver" -d "{{ lexfloatserver_version_directory }}" # noqa command-instead-of-shell
+  args:
+    creates: "{{ lexfloatserver_executable }}"
+    warn: false # Ansible's unarchive module still can't extract a single file
+  notify:
+    - restart LexFloatServer
+  become: true
+
+- name: Give executable the right permissions
+  file:
+    path: "{{ lexfloatserver_executable }}"
+    owner: root
+    mode: 0700
+  become: true
+
+- name: Remove old config file
+  file:
+    path: "{{ lexfloatserver_configuration_file }}"
+    state: absent
+  become: true
+
+- name: Setup config.yml file
+  template:
+    src: config.yml.j2
+    dest: "{{ lexfloatserver_yaml_configuration_file }}"
+    owner: root
+    mode: 0600
+  notify:
+    - restart LexFloatServer
+  become: true
+
+- name: Setup product.dat file
+  template:
+    src: product.dat.j2
+    dest: "{{ lexfloatserver_product_dat_file }}"
+    owner: root
+    mode: 0600
+  notify:
+    - restart LexFloatServer
+  become: true
+
+- name: Check LexFloatServer activation # noqa: no-changed-when
+  command: "{{ lexfloatserver_executable }} --status --product-file {{ lexfloatserver_product_dat_file }} --config {{ lexfloatserver_yaml_configuration_file }}"
+  register: lexfloatserver_status
+  become: true
+
+- name: Activate LexFloatServer
+  command: "{{ lexfloatserver_executable }} -a --license-key {{ lexactivator_licence_key }} --product-file {{ lexfloatserver_product_dat_file }} --config {{ lexfloatserver_yaml_configuration_file }}"
+  register: activation
+  when: '"Activation Status: OK" not in lexfloatserver_status.stdout'
+  become: true
+
+- name: Setup LexFloatServer systemd unitfile
+  template:
+    src: LexFloatServer.service.j2
+    dest: /etc/systemd/system/LexFloatServer.service
+    mode: u=rw,g=r,o=r
+  become: true
+
+- name: Enable and start LexFloatServer systemd service
+  systemd:
+    name: LexFloatServer
+    state: started
+    enabled: true
+    daemon_reload: true
+  become: true
